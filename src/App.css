@@ -1,5 +1,70 @@
 .App {
-  text-align: center;
+  width: 60%;
+  margin: auto;
+  padding: 20px;
+  background-color: #f6f6ef;
+}
+
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+span {
+  border-bottom: 2px dotted;
+}
+
+#show-button-line {
+  margin-bottom: 20px;
+}
+
+a {
+  color: black;
+  font-style: oblique;
+}
+
+#xandre:hover {
+  color: lightpink;
+  text-decoration: overline underline line-through;
+  text-transform: capitalize;
+  letter-spacing: -5px;
+  background-color: darkred;
+  font-style: oblique;
+  font-size: 30px;
+}
+
+.posting {
+  border-color: black;
+  border-width: 2px;
+  border-style: dotted;
+  padding: 20px;
+  margin: 20px;
+}
+
+span:hover {
+  color: white;
+  background-color: black;
+}
+
+h1 {
+  margin-bottom: 0px;
+}
+
+#author {
+  margin-bottom: 30px;
+}
+
+#search-bar {
+  padding-bottom: 30px;
+  padding-left:60px;
+  margin-bottom: 20px;
+  border-style: hidden hidden solid hidden;
+  border-width: 4px;
+  border-color: #ff6600;
 }
 
 .App-logo {
