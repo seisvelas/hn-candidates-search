@@ -6,3 +6,7 @@ Written in React with plain old JS. Although I'd have loved to build this with R
 dev, just a boring security engineer. So I used the skills I already have to make something that works.
 
 Or maybe it doesn't work - in which case, feel free to create an issue or just submit a PR!
+
+### How it works
+
+It searches for candidates who've posted in the current year and orders them with the newest at top.
