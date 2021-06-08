@@ -5,10 +5,10 @@ import DOMPurify from 'dompurify';
 const algoliaUrl = `https://hn.algolia.com/api/v1/search_by_date?query=Ask%20HN:%20${new Date().getFullYear()}&tags=ask_hn,author_whoishiring&hitsPerPage=1000`;
 let changed = false;
 
-function Candidate(author, comment, date) {
+function Candidate(author, comment, date, postId) {
   // TODO: Parse comment here to add additional optional fields
   return {
-    author, comment, date,
+    author, comment, date, postId,
     remote: !!comment.toLowerCase().replace(/\s+/g, '').match(/remote:y/g), // regex to find remote in comment
     location: undefined,
     will_relocate: undefined // ^^^^
@@ -69,7 +69,14 @@ function Jobs({comments, condition}) {
           we should be fine, since we only receive HTML served from HN and they already filter for this.
           But just in case, we use DOMPurify to remove XSS from the comments.
         */
-        <div dangerouslySetInnerHTML={{__html:DOMPurify.sanitize(`<div class="posting" key=${i}><b>Author:</b> ${e.author}<br /><b>Date:</b> ${e.date}<p />${e.comment}<p /></div><hr />`)}}/>
+        <div dangerouslySetInnerHTML={{__html:DOMPurify.sanitize(`
+          <div class="posting" key=${i}>
+            <b>Author:</b> <a href="https://news.ycombinator.com/user?id=${e.author}">${e.author}</a><br />
+            <b>Date:</b> <a href="https://news.ycombinator.com/item?id=${e.postId}">${e.date}</a>
+            <p />${e.comment}<p />
+          </div>
+          <hr />`)
+        }}/>
       )
     );
   return (
@@ -101,9 +108,9 @@ function App() {
               const newComments = [];
               data.hits
                 .filter(c => `${c.parent_id}` === `${t}`)
-                .forEach( ({author, comment_text, created_at}) => {
+                .forEach( ({author, comment_text, created_at, objectID}) => {
                 newComments.push(
-                  Candidate(author, comment_text, created_at)
+                  Candidate(author, comment_text, created_at, objectID)
                 );
               })
               setComments(c => [...newComments, ...c]);
