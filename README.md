@@ -10,3 +10,11 @@ Or maybe it doesn't work - in which case, feel free to create an issue or just s
 ### How it works
 
 It searches for candidates who've posted in the current year and orders them with the newest at top.
+
+### Thank you
+
+Thank you to the following open source contributors who've helped with this:
+
+https://github.com/mkopinsky https://github.com/seisvelas/hn-candidates-search/pull/3
+
+
