@@ -2,8 +2,7 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
-const algoliaUrl = `https://hn.algolia.com/api/v1/search_by_date?query=Ask%20HN:%20${new Date().getFullYear()}&tags=ask_hn,author_whoishiring&hitsPerPage=1000`;
-let changed = false;
+const findHiringThreadsUrl = `https://hn.algolia.com/api/v1/search_by_date?query=Ask%20HN:%20&tags=ask_hn,author_whoishiring&hitsPerPage=1000`;
 
 function Candidate(author, comment, date, postId) {
   // TODO: Parse comment here to add additional optional fields
@@ -46,7 +45,6 @@ function Jobs({comments, condition}) {
   const [hidden, setHidden] = useState(true);
   useEffect(() => {
   }, [comments]);
-  console.log(condition)
   const commentCode = comments
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .filter(c => {
@@ -85,7 +83,7 @@ function Jobs({comments, condition}) {
       <span onClick={()=>setHidden(!hidden)}>{hidden ? "show ▼" : "hide ▲"}</span></div>
       {hidden ? "" : commentCode}
     </div>
-  )
+  );
 }
 
 function App() {
@@ -93,32 +91,28 @@ function App() {
   const [condition, setCondition] = useState(null);
 
   useEffect(() => {
-    setComments([])
-    if (!changed) {
-      fetch(algoliaUrl)
-      .then(response => response.json())
-      .then(data => {
-        data.hits
-          .filter(h => h.title.includes("wants") && h.created_at.includes(new Date().getFullYear()))
-          .map(h => h.objectID)
-          .forEach(t => {
-            fetch(`https://hn.algolia.com/api/v1/search_by_date?query=&tags=comment,story_${t}&hitsPerPage=1000`)
-            .then(response => response.json())
-            .then(data => {
-              const newComments = [];
-              data.hits
-                .filter(c => `${c.parent_id}` === `${t}`)
-                .forEach( ({author, comment_text, created_at, objectID}) => {
+    const acquireComments = async () => {
+      setComments([]);
+      const response = await fetch(findHiringThreadsUrl);
+      const data = await response.json();
+      data.hits
+        .filter(h => h.title.includes("wants") && h.created_at.includes(new Date().getFullYear())) // todo: check last n months (configurable via ui) instead of current year
+        .map(h => h.objectID)
+        .forEach(async t => {
+          const specificMonthRawResponse = await fetch(`https://hn.algolia.com/api/v1/search_by_date?query=&tags=comment,story_${t}&hitsPerPage=1000`);
+          const { hits: specificMonthJsonResponses } = await specificMonthRawResponse.json();
+            const newComments = [];
+            specificMonthJsonResponses
+              .filter(c => `${c.parent_id}` === `${t}`)
+              .forEach( ({author, comment_text, created_at, objectID}) => {
                 newComments.push(
                   Candidate(author, comment_text, created_at, objectID)
                 );
-              })
-              setComments(c => [...newComments, ...c]);
-            });
-          });
-      });
-    }
-    changed = true;
+            })
+            setComments(c => [...newComments, ...c]);
+        });
+      }
+      acquireComments();
   }, []);
 
   return (
