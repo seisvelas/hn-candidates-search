@@ -8,7 +8,7 @@ function Candidate(author, comment, date, postId) {
   // TODO: Parse comment here to add additional optional fields
   return {
     author, comment, date, postId,
-    remote: !!comment.toLowerCase().replace(/\s+/g, '').match(/remote:y/g), // regex to find remote in comment
+    remote: !!comment.toLowerCase().replace(/\s+/g, '').match(/remote:y|remote:ok/g), // regex to find remote in comment
     location: undefined,
     will_relocate: undefined // ^^^^
   };
